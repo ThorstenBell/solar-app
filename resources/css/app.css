@@ -1,3 +1,121 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+*,
+*::before,
+*::after,
+html,
+body {
+    box-sizing: border-box;
+    margin: 0;
+    position: relative;
+    font-weight: normal;
+    overflow-x: hidden;
+}
+
+html {
+    font-size: 10px;
+    font-family: sans-serif;
+}
+
+body {
+    padding: 2rem;
+    max-width: 120rem;
+    margin: 0 auto;
+    min-height: 100vh;
+    transition: all 0.5s;
+    line-height: 1.6;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+ul {
+    list-style: none;
+}
+
+h1 {
+    font-size: 2.8rem;
+    font-weight: 500;
+    margin: 0;
+}
+
+h2 {
+    font-size: 2rem;
+    font-weight: 400;
+    margin: 2.4rem 0 0;
+}
+
+p {
+    font-weight: 300;
+}
+
+table {
+    border-collapse: collapse;
+    margin: 2.5rem 0;
+    font-size: 1.6rem;
+    width: 100%;
+
+    thead {
+        tr {
+            background-color: #009879;
+            color: #ffffff;
+            text-align: left;
+        }
+    }
+
+    th,
+    td {
+        padding: 1.2rem 1.5rem;
+    }
+
+    tbody {
+        tr {
+            border-bottom: 1px solid #dddddd;
+
+            &:nth-of-type(even) {
+                background-color: #f3f3f3;
+            }
+
+            &:last-of-type {
+                border-bottom: 2px solid #009879;
+            }
+        }
+    }
+
+    td.actions {
+        display: flex;
+        gap: .8rem;
+    }
+}
+form {
+    display: flex;
+    flex-direction: column;
+
+    label {
+        font-size: 1.6rem;
+    }
+
+    input, select {
+        font-size: 1.6rem;
+        height: 3.2rem;
+        border-radius: .4rem;
+        border: .1rem solid #ddd;
+    }
+
+    button {
+        margin-top: 1rem;
+    }
+}
+
+button {
+    font-size: 1.6rem;
+    padding: 1rem 2rem;
+    border: none;
+    background-color: #009879;
+    color: #ffffff;
+    cursor: pointer;
+    border-radius: .4rem;
+    transition: all .3s;
+
+    &:hover {
+        background-color: #007a6e;
+    }
+}

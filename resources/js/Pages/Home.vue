@@ -3,7 +3,7 @@
         <h1>Energy Data</h1>
         <div class="graph-container">
             <div class="graph">
-                <h2>Energy Usage</h2>
+                <h2>Energy Consumption</h2>
                 <div class="graph-wrapper">
                     <Scatter v-if="isDataLoaded" :data="usageChartData" :options="chartOptions"/>
                     <p v-else>Loading chart...</p>

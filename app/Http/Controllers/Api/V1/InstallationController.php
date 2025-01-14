@@ -6,8 +6,8 @@ use App\Models\Installation;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\InstallationRequest;
 use App\Http\Resources\V1\InstallationResource;
+use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /**
  * Installation controller
@@ -15,42 +15,58 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 class InstallationController extends Controller
 {
     /**
-     * @return AnonymousResourceCollection
+     * @return JsonResponse
      */
-    public function index(): AnonymousResourceCollection
+    public function index(): JsonResponse
     {
 //        return InstallationResource::collection(Installation::paginate(20));
-        return InstallationResource::collection(Installation::all());
+        try {
+            return response()->json(['message' => 'success', 'data' => InstallationResource::collection(Installation::all())]);
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], $e->getCode());
+        }
     }
 
     /**
      * @param InstallationRequest $request
-     * @return InstallationResource
+     * @return JsonResponse
      */
-    public function store(InstallationRequest $request): InstallationResource
+    public function store(InstallationRequest $request): JsonResponse
     {
-        $installation = Installation::create($request->validated());
-        return new InstallationResource($installation);
+        try {
+            $installation = Installation::create($request->validated());
+            return response()->json(['message' => 'success', 'data' => new InstallationResource($installation)], 201);
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], $e->getCode());
+        }
     }
 
     /**
      * @param Installation $installation
-     * @return InstallationResource
+     * @return JsonResponse
      */
-    public function show(Installation $installation): InstallationResource
+    public function show(Installation $installation): JsonResponse
     {
-        return new InstallationResource($installation);
+        try {
+            return response()->json(['message' => 'success', 'data' => new InstallationResource($installation)]);
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], $e->getCode());
+        }
     }
 
     /**
      * @param InstallationRequest $request
      * @param Installation $installation
-     * @return InstallationResource
+     * @return JsonResponse
      */
-    public function update(InstallationRequest $request, Installation $installation): InstallationResource
+    public function update(InstallationRequest $request, Installation $installation): JsonResponse
     {
-        $installation->update($request->validated());
-        return new InstallationResource($installation);
+        try {
+            $installation->update($request->validated());
+            return response()->json(['message' => 'success', 'data' => new InstallationResource($installation)]);
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], $e->getCode());
+        }
     }
 
     /**
@@ -59,7 +75,11 @@ class InstallationController extends Controller
      */
     public function destroy(Installation $installation): JsonResponse
     {
-        $installation->delete();
-        return response()->json(['message' => 'Installation deleted']);
+        try {
+            $installation->delete();
+            return response()->json(['message' => 'Energy usage deleted']);
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], $e->getCode());
+        }
     }
 }

@@ -6,48 +6,64 @@ use App\Http\Controllers\Controller;
 use App\Models\EnergyUsage;
 use App\Http\Requests\EnergyUsageRequest;
 use App\Http\Resources\V1\EnergyUsageResource;
+use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class EnergyUsageController extends Controller
 {
     /**
-     * @return AnonymousResourceCollection
+     * @return JsonResponse
      */
-    public function index()
+    public function index(): JsonResponse
     {
 //        return EnergyUsageResource::collection(EnergyUsage::paginate(20));
-        return EnergyUsageResource::collection(EnergyUsage::all());
+        try {
+            return response()->json(['message' => 'success', 'data' => EnergyUsageResource::collection(EnergyUsage::all())]);
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], $e->getCode());
+        }
     }
 
     /**
      * @param EnergyUsageRequest $request
-     * @return EnergyUsageResource
+     * @return JsonResponse
      */
-    public function store(EnergyUsageRequest $request): EnergyUsageResource
+    public function store(EnergyUsageRequest $request): JsonResponse
     {
-        $energyUsage = EnergyUsage::create($request->validated());
-        return new EnergyUsageResource($energyUsage);
+        try {
+            $energyUsage = EnergyUsage::create($request->validated());
+            return response()->json(['message' => 'success', 'data' => new EnergyUsageResource($energyUsage)], 201);
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], $e->getCode());
+        }
     }
 
     /**
      * @param EnergyUsage $energyUsage
-     * @return EnergyUsageResource
+     * @return JsonResponse
      */
-    public function show(EnergyUsage $energyUsage): EnergyUsageResource
+    public function show(EnergyUsage $energyUsage): JsonResponse
     {
-        return new EnergyUsageResource($energyUsage);
+        try {
+            return response()->json(['message' => 'success', 'data' => new EnergyUsageResource($energyUsage)]);
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], $e->getCode());
+        }
     }
 
     /**
      * @param EnergyUsageRequest $request
      * @param EnergyUsage $energyUsage
-     * @return EnergyUsageResource
+     * @return JsonResponse
      */
-    public function update(EnergyUsageRequest $request, EnergyUsage $energyUsage): EnergyUsageResource
+    public function update(EnergyUsageRequest $request, EnergyUsage $energyUsage): JsonResponse
     {
-        $energyUsage->update($request->validated());
-        return new EnergyUsageResource($energyUsage);
+        try {
+            $energyUsage->update($request->validated());
+            return response()->json(['message' => 'success', 'data' => new EnergyUsageResource($energyUsage)]);
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], $e->getCode());
+        }
     }
 
     /**
@@ -56,7 +72,11 @@ class EnergyUsageController extends Controller
      */
     public function destroy(EnergyUsage $energyUsage): JsonResponse
     {
-        $energyUsage->delete();
-        return response()->json(['message' => 'Energy usage deleted']);
+        try {
+            $energyUsage->delete();
+            return response()->json(['message' => 'Energy usage deleted']);
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], $e->getCode());
+        }
     }
 }

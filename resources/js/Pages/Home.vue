@@ -1,66 +1,66 @@
 <template>
-    <div>
-        <h1>Energy Data</h1>
-        <div class="graph-container">
-            <div class="graph">
-                <h2>Energy Consumption</h2>
-                <div class="graph-wrapper">
-                    <Scatter v-if="isDataLoaded" :data="usageChartData" :options="chartOptions"/>
-                    <p v-else>Loading chart...</p>
-                </div>
-            </div>
-            <div class="graph">
-                <h2>Energy Production</h2>
-                <div class="graph-wrapper">
-                    <Scatter v-if="isDataLoaded" :data="productionChartData" :options="chartOptions"/>
-                    <p v-else>Loading chart...</p>
-                </div>
+    <h1>Energy Data</h1>
+    <div class="graph-container">
+        <div class="graph">
+            <h2>Energy Consumption</h2>
+            <div class="graph-wrapper">
+                <Scatter v-if="isDataLoaded" :data="usageChartData" :options="chartOptions"/>
+                <p v-else class="loading-text">Loading chart...</p>
             </div>
         </div>
-        <h2 v-if="!isEdit">Create Energy Record</h2>
-        <h2 v-else>Edit Energy Record</h2>
-        <form>
-            <label for="installation_id">Installation</label>
-            <select v-model="installationId" id="installation_id" name="installation_id">
-                <option v-for="installation in installations" :key="installation.id" :value="installation.id">
-                    {{ installation.name }}
-                </option>
-            </select>
-            <label for="energy_produced">Energy Produced</label>
-            <input v-model="energyProduced" type="number" name="energy_produced" id="energy_produced" min="0">
-            <label for="energy_consumed">Energy Consumed</label>
-            <input v-model="energyConsumed" type="number" name="energy_consumed" id="energy_consumed" min="0">
-            <label for="date">Date</label>
-            <input v-model="energyDate" type="date" name="date">
-            <button  v-if="!isEdit" type="button" @click.prevent="createEnergyRecord">Add Energy Info</button>
-            <button  v-else type="button" @click.prevent="updateEnergyRecord">Save Energy Info</button>
-        </form>
-
-        <h2>Energy Records</h2>
-        <table>
-            <thead>
-            <tr>
-                <th>Installation</th>
-                <th>Energy Produced</th>
-                <th>Energy Consumed</th>
-                <th>Date</th>
-                <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="energyRecord in energyData" :key="energyRecord.id">
-                <td>{{ getInstallationName(energyRecord.installation_id) }}</td>
-                <td>{{ energyRecord.energy_produced }}</td>
-                <td>{{ energyRecord.energy_consumed }}</td>
-                <td>{{ energyRecord.date }}</td>
-                <td class="actions">
-                    <button @click.prevent="deleteEnergyRecord(energyRecord.id)">Delete</button>
-                    <button @click.prevent="editEnergyRecord(energyRecord)">Edit</button>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+        <div class="graph">
+            <h2>Energy Production</h2>
+            <div class="graph-wrapper">
+                <Scatter v-if="isDataLoaded" :data="productionChartData" :options="chartOptions"/>
+                <p v-else class="loading-text">Loading chart...</p>
+            </div>
+        </div>
     </div>
+    <h2 v-if="!isEdit">Create Energy Record</h2>
+    <h2 v-else>Edit Energy Record</h2>
+    <form>
+        <label for="installation_id">Installation</label>
+        <select v-model="installationId" id="installation_id" name="installation_id">
+            <option v-for="installation in installations" :key="installation.id" :value="installation.id">
+                {{ installation.name }}
+            </option>
+        </select>
+        <label for="energy_produced">Energy Produced</label>
+        <input v-model="energyProduced" type="number" name="energy_produced" id="energy_produced" min="0">
+        <label for="energy_consumed">Energy Consumed</label>
+        <input v-model="energyConsumed" type="number" name="energy_consumed" id="energy_consumed" min="0">
+        <label for="date">Date</label>
+        <input v-model="energyDate" type="date" name="date">
+        <button v-if="!isEdit" type="button" @click.prevent="createEnergyRecord">Add Energy Info</button>
+        <button v-else type="button" @click.prevent="updateEnergyRecord">Save Energy Info</button>
+    </form>
+
+    <h2>Energy Records</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Installation</th>
+            <th>Energy Produced</th>
+            <th>Energy Consumed</th>
+            <th>Date</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="energyRecord in energyData" :key="energyRecord.id">
+            <td>{{ getInstallationName(energyRecord.installation_id) }}</td>
+            <td>{{ energyRecord.energy_produced }}</td>
+            <td>{{ energyRecord.energy_consumed }}</td>
+            <td>{{ energyRecord.date }}</td>
+            <td class="actions">
+                <button @click.prevent="deleteEnergyRecord(energyRecord.id)">Delete</button>
+                <button @click.prevent="editEnergyRecord(energyRecord)">Edit</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <span class="message" v-if="energyData?.length === 0">No energy data found</span>
+    <span class="message" v-if="errorMessage">{{ errorMessage }}</span>
 </template>
 
 <script setup>
@@ -96,6 +96,7 @@ const installations = ref();
 const isDataLoaded = ref(false);
 const isEdit = ref(false);
 const editId = ref(null);
+const errorMessage = ref(null);
 const installationId = defineModel('installationId');
 const energyProduced = defineModel('energyProduced');
 const energyConsumed = defineModel('energyConsumed');
@@ -187,7 +188,7 @@ const getEnergyData = async () => {
         }, []);
         createGraphData(groupedData);
     } catch (error) {
-        console.log(error.message);
+        errorMessage.value = error.message
     }
 };
 
@@ -196,7 +197,7 @@ const getInstallations = async () => {
         const {data} = await axios.get("/api/v1/installation");
         installations.value = data.data;
     } catch (error) {
-        console.log(error.message);
+        errorMessage.value = error.message
     }
 };
 
@@ -219,7 +220,7 @@ const createEnergyRecord = async () => {
         energyConsumed.value = null;
         energyDate.value = null;
     } catch (error) {
-        console.log(error.message);
+        errorMessage.value = error.message
     }
 }
 
@@ -250,7 +251,7 @@ const updateEnergyRecord = async () => {
         energyConsumed.value = null;
         energyDate.value = null;
     } catch (error) {
-        console.log(error.message);
+        errorMessage.value = error.message
     }
 }
 
@@ -259,7 +260,7 @@ const deleteEnergyRecord = async (energyRecordId) => {
         await axios.delete(`/api/v1/energy-usage/${energyRecordId}`);
         energyData.value = energyData.value.filter(energyRecord => energyRecord.id !== energyRecordId);
     } catch (error) {
-        console.log(error.message);
+        errorMessage.value = error.message
     }
 }
 
@@ -279,6 +280,10 @@ onMounted(() => {
 .graph-wrapper {
     width: 100%;
     height: 40rem;
+}
+
+.loading-text {
+    font-size: 1.6rem;
 }
 
 @media screen and (max-width: 768px) {

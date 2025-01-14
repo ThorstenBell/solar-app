@@ -5,9 +5,13 @@
 `composer install`
 
 ### Run
-`npm run dev`
+`npm run build`
 `php artisan serve`
 [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+
+### Tests
+`npm run test`
+`php artisan test`
 
 ### Choices
 - I chose to have installations and measurements as separate tables because I wanted to be able to add more measurements to a single installation.
@@ -18,6 +22,7 @@
 - In production, the app uses a different .env file
 
 ### Future possibilities
+- Write better and more tests
 - Fix chart rendering after data update
 - Form validation
 - Default values for the measurements
